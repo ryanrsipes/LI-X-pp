@@ -1,7 +1,945 @@
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Post Previewer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.x-theme {
+            background-color: #15202b;
+        }
+        
+        body.linkedin-theme {
+            background-color: #f3f2ef;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .x-theme .container {
+            background-color: #15202b;
+            color: #e7e9ea;
+            border: 1px solid #38444d;
+        }
+        
+        .linkedin-theme .container {
+            background-color: #fff;
+            color: #191919;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme h1 {
+            color: #e7e9ea;
+        }
+        
+        .linkedin-theme h1 {
+            color: #191919;
+        }
+        
+        .platform-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background-color: #f8f8f8;
+            padding: 5px;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+        
+        .x-theme .platform-toggle {
+            background-color: #273340;
+        }
+        
+        .linkedin-theme .platform-toggle {
+            background-color: #f3f2ef;
+        }
+        
+        .platform-btn {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            max-width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            outline: none;
+            background: none;
+            font-size: 16px;
+        }
+        
+        .platform-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .x-theme .platform-btn {
+            color: #e7e9ea;
+        }
+        
+        .x-theme .platform-btn:hover {
+            background-color: rgba(231, 233, 234, 0.1);
+        }
+        
+        .platform-btn.active {
+            background-color: #1d9bf0;
+            color: white;
+        }
+        
+        .platform-btn.active.linkedin-btn {
+            background-color: #0a66c2;
+        }
+        
+        .platform-logo {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Tab Content Structure */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Input Area Styles */
+        .post-input-container {
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme .input-label {
+            color: #e7e9ea;
+        }
+        
+        .linkedin-theme .input-label {
+            color: #191919;
+        }
+        
+        .device-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .device-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: none;
+            border: 1px solid;
+        }
+        
+        .x-theme .device-btn {
+            border-color: #38444d;
+            color: #e7e9ea;
+        }
+        
+        .x-theme .device-btn:hover {
+            background-color: rgba(231, 233, 234, 0.1);
+        }
+        
+        .x-theme .device-btn.active {
+            background-color: #1d9bf0;
+            color: white;
+            border-color: #1d9bf0;
+        }
+        
+        .linkedin-theme .device-btn {
+            border-color: #dfe1e5;
+            color: #191919;
+        }
+        
+        .linkedin-theme .device-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .linkedin-theme .device-btn.active {
+            background-color: #0a66c2;
+            color: white;
+            border-color: #0a66c2;
+        }
+        
+        .input-area {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .x-theme .input-area {
+            background-color: #273340;
+            border: 1px solid #38444d;
+        }
+        
+        .linkedin-theme .input-area {
+            background-color: #fff;
+            border: 1px solid #dfe1e5;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            resize: none;
+            font-size: 16px;
+            font-family: inherit;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        textarea:focus {
+            outline: none;
+        }
+        
+        .x-theme textarea {
+            background-color: #273340;
+            color: #e7e9ea;
+        }
+        
+        .linkedin-theme textarea {
+            background-color: #fff;
+            color: #191919;
+        }
+        
+        .character-count {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme .character-count {
+            color: #8899a6;
+        }
+        
+        .x-theme .character-count.limit {
+            color: #ff4136;
+        }
+        
+        .linkedin-theme .character-count {
+            color: #666666;
+        }
+        
+        .linkedin-theme .character-count.limit {
+            color: #b74700;
+        }
+        
+        /* Preview Container Styles */
+        .preview-container {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme .preview-title {
+            color: #e7e9ea;
+        }
+        
+        .linkedin-theme .preview-title {
+            color: #191919;
+        }
+        
+        .post-preview {
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .x-theme .post-preview {
+            background-color: #1e2732;
+            border: 1px solid #38444d;
+        }
+        
+        .linkedin-theme .post-preview {
+            background-color: #fff;
+            border: 1px solid #dfe1e5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        /* Engagement Styles */
+        .post-engagement, .x-engagement {
+            display: flex;
+            padding: 12px 0;
+            margin-top: 10px;
+            border-top: 1px solid;
+        }
+        
+        .x-theme .post-engagement, .x-theme .x-engagement {
+            border-color: #38444d;
+        }
+        
+        .linkedin-theme .post-engagement {
+            border-color: #dfe1e5;
+        }
+        
+        .engagement-stat {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            font-size: 13px;
+        }
+        
+        .x-theme .engagement-stat {
+            color: #8899a6;
+        }
+        
+        .engagement-stat svg {
+            margin-right: 6px;
+        }
+        
+        /* X Action Buttons */
+        .x-post-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid;
+        }
+        
+        .x-theme .x-post-actions {
+            border-color: #38444d;
+        }
+        
+        .x-action-btn {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 20px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .x-theme .x-action-btn {
+            color: #8899a6;
+        }
+        
+        .x-theme .x-action-btn:hover {
+            background-color: rgba(231, 233, 234, 0.1);
+        }
+        
+        .x-action-btn svg {
+            margin-right: 6px;
+        }
+        
+        /* LinkedIn Reactions and Actions */
+        .linkedin-reactions {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            margin-top: 10px;
+            border-top: 1px solid #dfe1e5;
+            font-size: 13px;
+        }
+        
+        .linkedin-theme .linkedin-reactions {
+            color: #666666;
+        }
+        
+        .reaction-icons {
+            display: flex;
+            margin-right: 5px;
+        }
+        
+        .reaction-icon {
+            font-size: 16px;
+            margin-right: -5px;
+        }
+        
+        .reaction-count {
+            margin-right: 12px;
+        }
+        
+        .comment-repost-counts {
+            margin-left: auto;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .linkedin-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #dfe1e5;
+        }
+        
+        .linkedin-action-btn {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            color: #666666;
+        }
+        
+        .linkedin-action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 10px;
+            overflow: hidden;
+            background-color: #444;
+        }
+        
+        .x-theme .avatar {
+            border: 1px solid #38444d;
+        }
+        
+        .linkedin-theme .avatar {
+            border: 1px solid #dfe1e5;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .post-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .post-name {
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme .post-name {
+            color: #e7e9ea;
+        }
+        
+        .linkedin-theme .post-name {
+            color: #191919;
+        }
+        
+        .post-meta {
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme .post-meta {
+            color: #8899a6;
+        }
+        
+        .linkedin-theme .post-meta {
+            color: #666666;
+        }
+        
+        .post-content {
+            line-height: 1.5;
+            word-wrap: break-word;
+            transition: color 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .x-theme .post-content {
+            color: #e7e9ea;
+        }
+        
+        .linkedin-theme .post-content {
+            color: #191919;
+        }
+        
+        .post-content.truncated-x-desktop {
+            max-height: 160px;
+        }
+        
+        .post-content.truncated-x-mobile {
+            max-height: 100px;
+        }
+        
+        .post-content.truncated-linkedin-desktop {
+            max-height: 120px;
+        }
+        
+        .post-content.truncated-linkedin-mobile {
+            max-height: 80px;
+        }
+        
+        .show-more-btn {
+            margin-top: 10px;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme .show-more-btn {
+            color: #1d9bf0;
+        }
+        
+        .linkedin-theme .show-more-btn {
+            color: #0a66c2;
+        }
+        
+        /* Status message */
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .x-theme .status-message.ok {
+            background-color: rgba(23, 191, 99, 0.1);
+            color: #17bf63;
+            border: 1px solid rgba(23, 191, 99, 0.3);
+        }
+        
+        .x-theme .status-message.truncated {
+            background-color: rgba(29, 155, 240, 0.1);
+            color: #1d9bf0;
+            border: 1px solid rgba(29, 155, 240, 0.3);
+        }
+        
+        .linkedin-theme .status-message.ok {
+            background-color: rgba(5, 118, 66, 0.1);
+            color: #057642;
+            border: 1px solid rgba(5, 118, 66, 0.3);
+        }
+        
+        .linkedin-theme .status-message.truncated {
+            background-color: rgba(10, 102, 194, 0.1);
+            color: #0a66c2;
+            border: 1px solid rgba(10, 102, 194, 0.3);
+        }
+        
+        /* Info Container Styles */
+        .info-container {
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+        
+        .x-theme .info-container {
+            background-color: #1e2732;
+            border: 1px solid #38444d;
+        }
+        
+        .linkedin-theme .info-container {
+            background-color: #fff;
+            border: 1px solid #dfe1e5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .info-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+            border-bottom: 1px solid;
+            padding-bottom: 10px;
+        }
+        
+        .x-theme .info-title {
+            color: #e7e9ea;
+            border-color: #38444d;
+        }
+        
+        .linkedin-theme .info-title {
+            color: #191919;
+            border-color: #dfe1e5;
+        }
+        
+        .x-theme .info-title.x-color {
+            color: #1d9bf0;
+        }
+        
+        .linkedin-theme .info-title.linkedin-color {
+            color: #0a66c2;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .x-theme th, .x-theme td {
+            border-bottom: 1px solid #38444d;
+            color: #e7e9ea;
+        }
+        
+        .x-theme th {
+            background-color: #273340;
+        }
+        
+        .linkedin-theme th, .linkedin-theme td {
+            border-bottom: 1px solid #dfe1e5;
+            color: #191919;
+        }
+        
+        .linkedin-theme th {
+            background-color: #f3f2ef;
+        }
+        
+        tr:hover {
+            transition: background-color 0.3s ease;
+        }
+        
+        .x-theme tr:hover {
+            background-color: #273340;
+        }
+        
+        .linkedin-theme tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        p.tip {
+            margin-top: 15px;
+            font-style: italic;
+            transition: color 0.3s ease;
+        }
+        
+        .x-theme p.tip {
+            color: #8899a6;
+        }
+        
+        .linkedin-theme p.tip {
+            color: #666666;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            transition: color 0.3s ease;
+            padding-top: 15px;
+            border-top: 1px solid;
+        }
+        
+        .x-theme .footer {
+            color: #8899a6;
+            border-color: #38444d;
+        }
+        
+        .linkedin-theme .footer {
+            color: #666666;
+            border-color: #dfe1e5;
+        }
+    </style>
+</head>
+<body class="x-theme">
+    <div class="container">
+        <h1>Social Media Post Previewer</h1>
+        
+        <div class="platform-toggle">
+            <button class="platform-btn active" id="x-platform-btn">
+                <svg class="platform-logo" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                </svg>
+                X / Twitter
+            </button>
+            <button class="platform-btn linkedin-btn" id="linkedin-platform-btn">
+                <svg class="platform-logo" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+                </svg>
+                LinkedIn
+            </button>
+        </div>
+        
+        <!-- X Platform Content -->
+        <div class="tab-content active" id="x-tab">
+            <!-- X Post Input Section -->
+            <div class="post-input-container">
+                <div class="input-label">Compose your X post:</div>
+                
+                <div class="device-toggle">
+                    <button class="device-btn active" id="x-desktop-btn">Desktop</button>
+                    <button class="device-btn" id="x-mobile-btn">Mobile</button>
+                </div>
+                
+                <div class="input-area">
+                    <textarea id="x-post-input" placeholder="What's happening?"></textarea>
+                    <div id="x-char-count" class="character-count">0/280</div>
+                </div>
+            </div>
             
+            <!-- X Post Preview Section -->
+            <div class="preview-container">
+                <div class="preview-title">Post Preview</div>
+                
+                <div class="post-preview">
+                    <div class="post-header">
+                        <div class="avatar">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyMCIgZmlsbD0iIzFlMjAzMCIvPjxwYXRoIGQ9Ik0xMjggNzBhNTggNTggMCAwIDAgMCAxMTYgNTggNTggMCAwIDAgMC0xMTZ6IiBmaWxsPSIjNzE3NjdiIi8+PC9zdmc+" alt="Profile avatar">
+                        </div>
+                        <div class="post-user-info">
+                            <div class="post-name">User Name</div>
+                            <div class="post-meta">@username</div>
+                        </div>
+                    </div>
+                    
+                    <div id="x-post-content" class="post-content truncated-x-desktop"></div>
+                    <div id="x-show-more" class="show-more-btn" style="display: none;">Show more</div>
+                    
+                    <div class="post-engagement x-engagement">
+                        <div class="engagement-stat">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
+                            </svg>
+                            <span>16</span>
+                        </div>
+                        <div class="engagement-stat">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
+                            </svg>
+                            <span>8</span>
+                        </div>
+                        <div class="engagement-stat">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                            </svg>
+                            <span>42</span>
+                        </div>
+                        <div class="engagement-stat">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
+                            </svg>
+                            <span>2.5K</span>
+                        </div>
+                    </div>
+                    
+                    <div class="x-post-actions">
+                        <div class="x-action-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></svg>
+                            <span>Reply</span>
+                        </div>
+                        <div class="x-action-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></svg>
+                            <span>Repost</span>
+                        </div>
+                        <div class="x-action-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></svg>
+                            <span>Like</span>
+                        </div>
+                        <div class="x-action-btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path></svg>
+                            <span>Share</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="x-status" class="status-message" style="display: none;"></div>
+            </div>
+            
+            <!-- X Info Section -->
             <div class="info-container">
-                <h3 class="info-title">LinkedIn Character Limits</h3>
+                <h3 class="info-title x-color">X / Twitter Character Limits</h3>
+                <table>
+                    <tr>
+                        <th>Content Type</th>
+                        <th>Character Limit</th>
+                        <th>Truncated After</th>
+                    </tr>
+                    <tr>
+                        <td>Standard Post</td>
+                        <td>280 characters</td>
+                        <td>~35 words or 3-5 lines</td>
+                    </tr>
+                    <tr>
+                        <td>Reply</td>
+                        <td>280 characters</td>
+                        <td>Same as standard post</td>
+                    </tr>
+                    <tr>
+                        <td>Display Name</td>
+                        <td>50 characters</td>
+                        <td>No truncation</td>
+                    </tr>
+                    <tr>
+                        <td>Bio</td>
+                        <td>160 characters</td>
+                        <td>No truncation</td>
+                    </tr>
+                    <tr>
+                        <td>Thread Posts</td>
+                        <td>280 characters each</td>
+                        <td>Same as standard post</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th>Device</th>
+                        <th>Show More Appears After</th>
+                        <th>Visible Characters</th>
+                    </tr>
+                    <tr>
+                        <td>Desktop</td>
+                        <td>~3-5 lines</td>
+                        <td>~230-250 characters (context dependent)</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile</td>
+                        <td>~2-3 lines</td>
+                        <td>~125-150 characters (context dependent)</td>
+                    </tr>
+                </table>
+                <p class="tip">Note: "Show more" appears based on line count rather than precise character count, and can vary based on screen size, text formatting, and the presence of links or media.</p>
+            </div>
+        </div>
+        
+        <!-- LinkedIn Platform Content -->
+        <div class="tab-content" id="linkedin-tab">
+            <!-- LinkedIn Post Input Section -->
+            <div class="post-input-container">
+                <div class="input-label">Compose your LinkedIn post:</div>
+                
+                <div class="device-toggle">
+                    <button class="device-btn active" id="linkedin-desktop-btn">Desktop</button>
+                    <button class="device-btn" id="linkedin-mobile-btn">Mobile</button>
+                </div>
+                
+                <div class="input-area">
+                    <textarea id="linkedin-post-input" placeholder="What do you want to talk about?"></textarea>
+                    <div id="linkedin-char-count" class="character-count">0/3,000</div>
+                </div>
+            </div>
+            
+            <!-- LinkedIn Post Preview Section -->
+            <div class="preview-container">
+                <div class="preview-title">Post Preview</div>
+                
+                <div class="post-preview">
+                    <div class="post-header">
+                        <div class="avatar">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyMCIgZmlsbD0iI2YzZjJlZiIvPjxwYXRoIGQ9Ik0xMjggNzBhNTggNTggMCAwIDAgMCAxMTYgNTggNTggMCAwIDAgMC0xMTZ6IiBmaWxsPSIjMGE2NmMyIi8+PC9zdmc+" alt="Profile avatar">
+                        </div>
+                        <div class="post-user-info">
+                            <div class="post-name">User Name</div>
+                            <div class="post-meta">Business Professional</div>
+                        </div>
+                    </div>
+                    
+                    <div id="linkedin-post-content" class="post-content truncated-linkedin-desktop"></div>
+                    <div id="linkedin-show-more" class="show-more-btn" style="display: none;">...see more</div>
+                    
+                    <div class="linkedin-reactions">
+                        <div class="reaction-icons">
+                            <span class="reaction-icon like">👍</span>
+                            <span class="reaction-icon heart">❤️</span>
+                        </div>
+                        <span class="reaction-count">57</span>
+                        <div class="comment-repost-counts">
+                            <span>24 comments</span>
+                            <span>•</span>
+                            <span>6 reposts</span>
+                        </div>
+                    </div>
+                    
+                    <div class="linkedin-actions">
+                        <div class="linkedin-action-btn">
+                            <span class="action-icon">👍</span>
+                            <span>Like</span>
+                        </div>
+                        <div class="linkedin-action-btn">
+                            <span class="action-icon">💬</span>
+                            <span>Comment</span>
+                        </div>
+                        <div class="linkedin-action-btn">
+                            <span class="action-icon">🔄</span>
+                            <span>Repost</span>
+                        </div>
+                        <div class="linkedin-action-btn">
+                            <span class="action-icon">✉️</span>
+                            <span>Send</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="linkedin-status" class="status-message" style="display: none;"></div>
+            </div>
+            
+            <!-- LinkedIn Info Section -->
+            <div class="info-container">
+                <h3 class="info-title linkedin-color">LinkedIn Character Limits</h3>
                 <table>
                     <tr>
                         <th>Content Type</th>
@@ -28,1381 +966,295 @@
                         <td>1,750 characters</td>
                         <td>Fully displayed</td>
                     </tr>
+                    <tr>
+                        <td>Profile Headline</td>
+                        <td>220 characters</td>
+                        <td>Varies by device/context</td>
+                    </tr>
+                    <tr>
+                        <td>Message</td>
+                        <td>2,000 characters</td>
+                        <td>N/A (no truncation)</td>
+                    </tr>
                 </table>
-                <p>Toggle between views to ensure your content displays optimally on all devices.</p>
+                <p class="tip">Toggle between devices to ensure your content displays optimally on all platforms. For posts, the "...see more" prompt appears at different points on desktop vs. mobile.</p>
             </div>
-            
-            <div class="footer">
-                LinkedIn Post Previewer | Not affiliated with LinkedIn
-            </div>
+        </div>
+        
+        <div class="footer">
+            Social Media Post Previewer | Created with Claude
         </div>
     </div>
 
     <script>
-        // Toggle between platforms
+        // Platform Elements
         const xPlatformBtn = document.getElementById('x-platform-btn');
         const linkedinPlatformBtn = document.getElementById('linkedin-platform-btn');
-        const xContent = document.getElementById('x-content');
-        const linkedinContent = document.getElementById('linkedin-content');
+        const xTab = document.getElementById('x-tab');
+        const linkedinTab = document.getElementById('linkedin-tab');
         const body = document.body;
-
-        xPlatformBtn.addEventListener('click', () => {
-            xContent.classList.add('active');
-            linkedinContent.classList.remove('active');
-            body.className = 'x-theme';
-        });
-
-        linkedinPlatformBtn.addEventListener('click', () => {
-            xContent.classList.remove('active');
-            linkedinContent.classList.add('active');
-            body.className = 'linkedin-theme';
-        });
-
-        // X functionality
+        
+        // X Platform Elements
         const xPostInput = document.getElementById('x-post-input');
         const xCharCount = document.getElementById('x-char-count');
-        const xPostPreview = document.getElementById('x-post-preview');
-        const xShowMoreBtn = document.getElementById('x-show-more');
-        const xStatusDiv = document.getElementById('x-status');
-        const xMobileBtn = document.getElementById('x-mobile-btn');
+        const xPostContent = document.getElementById('x-post-content');
+        const xShowMore = document.getElementById('x-show-more');
+        const xStatus = document.getElementById('x-status');
         const xDesktopBtn = document.getElementById('x-desktop-btn');
-        const xPreviewContainer = document.getElementById('x-preview-container');
-        const xExactPreviewCheckbox = document.getElementById('x-exact-preview');
+        const xMobileBtn = document.getElementById('x-mobile-btn');
         
-        // X device-specific configurations
-        const xDeviceConfig = {
-            desktop: {
-                maxHeight: 315,  // Approximate height before "Show more" appears on desktop
-                fontSize: 16
-            },
-            mobile: {
-                maxHeight: 260,  // Smaller height for mobile
-                fontSize: 15
-            }
-        };
+        // LinkedIn Platform Elements
+        const linkedinPostInput = document.getElementById('linkedin-post-input');
+        const linkedinCharCount = document.getElementById('linkedin-char-count');
+        const linkedinPostContent = document.getElementById('linkedin-post-content');
+        const linkedinShowMore = document.getElementById('linkedin-show-more');
+        const linkedinStatus = document.getElementById('linkedin-status');
+        const linkedinDesktopBtn = document.getElementById('linkedin-desktop-btn');
+        const linkedinMobileBtn = document.getElementById('linkedin-mobile-btn');
         
-        let xCurrentDevice = 'desktop';
-        
-        // X Toggle between mobile and desktop views
-        xMobileBtn.addEventListener('click', () => {
-            setXDeviceView('mobile');
-        });
-        
-        xDesktopBtn.addEventListener('click', () => {
-            setXDeviceView('desktop');
-        });
-        
-        function setXDeviceView(device) {
-            xCurrentDevice = device;
+        // Platform Toggle Functionality
+        xPlatformBtn.addEventListener('click', function() {
+            // Update button states
+            xPlatformBtn.classList.add('active');
+            linkedinPlatformBtn.classList.remove('active');
             
-            // Update UI
-            if (device === 'mobile') {
-                xPreviewContainer.classList.remove('desktop');
-                xPreviewContainer.classList.add('mobile');
-                xMobileBtn.classList.add('active');
-                xDesktopBtn.classList.remove('active');
-            } else {
-                xPreviewContainer.classList.remove('mobile');
-                xPreviewContainer.classList.add('desktop');
-                xDesktopBtn.classList.add('active');
-                xMobileBtn.classList.remove('active');
-            }
+            // Show correct tab
+            xTab.classList.add('active');
+            linkedinTab.classList.remove('active');
             
-            // Re-evaluate the preview with the new device settings
+            // Update body theme
+            body.className = 'x-theme';
+            
+            // Update the preview
             updateXPreview();
-        }
+        });
         
-        xPostInput.addEventListener('input', updateXPreview);
-        xExactPreviewCheckbox.addEventListener('change', updateXPreview);
+        linkedinPlatformBtn.addEventListener('click', function() {
+            // Update button states
+            linkedinPlatformBtn.classList.add('active');
+            xPlatformBtn.classList.remove('active');
+            
+            // Show correct tab
+            linkedinTab.classList.add('active');
+            xTab.classList.remove('active');
+            
+            // Update body theme
+            body.className = 'linkedin-theme';
+            
+            // Update the preview
+            updateLinkedInPreview();
+        });
+        
+        // X Device Toggle
+        xDesktopBtn.addEventListener('click', function() {
+            xDesktopBtn.classList.add('active');
+            xMobileBtn.classList.remove('active');
+            
+            // Update to desktop view
+            xPostContent.classList.remove('truncated-x-mobile');
+            xPostContent.classList.add('truncated-x-desktop');
+            
+            updateXPreview();
+        });
+        
+        xMobileBtn.addEventListener('click', function() {
+            xMobileBtn.classList.add('active');
+            xDesktopBtn.classList.remove('active');
+            
+            // Update to mobile view
+            xPostContent.classList.remove('truncated-x-desktop');
+            xPostContent.classList.add('truncated-x-mobile');
+            
+            updateXPreview();
+        });
+        
+        // LinkedIn Device Toggle
+        linkedinDesktopBtn.addEventListener('click', function() {
+            linkedinDesktopBtn.classList.add('active');
+            linkedinMobileBtn.classList.remove('active');
+            
+            // Update to desktop view
+            linkedinPostContent.classList.remove('truncated-linkedin-mobile');
+            linkedinPostContent.classList.add('truncated-linkedin-desktop');
+            
+            updateLinkedInPreview();
+        });
+        
+        linkedinMobileBtn.addEventListener('click', function() {
+            linkedinMobileBtn.classList.add('active');
+            linkedinDesktopBtn.classList.remove('active');
+            
+            // Update to mobile view
+            linkedinPostContent.classList.remove('truncated-linkedin-desktop');
+            linkedinPostContent.classList.add('truncated-linkedin-mobile');
+            
+            updateLinkedInPreview();
+        });
+        
+        // X Input Handling
+        xPostInput.addEventListener('input', function() {
+            updateXCharCount();
+            updateXPreview();
+        });
+        
+        function updateXCharCount() {
+            const count = xPostInput.value.length;
+            xCharCount.textContent = `${count}/280`;
+            
+            if (count > 280) {
+                xCharCount.classList.add('limit');
+            } else {
+                xCharCount.classList.remove('limit');
+            }
+        }
         
         function updateXPreview() {
             const text = xPostInput.value;
-            const count = text.length;
-            const exactPreview = xExactPreviewCheckbox.checked;
             
-            // Update character count
-            xCharCount.textContent = `${count}/280`;
-            xCharCount.className = count > 280 ? 'character-count limit' : 'character-count';
+            // Format text (handle line breaks)
+            xPostContent.innerHTML = formatText(text);
             
-            // Update preview content with line breaks
-            xPostPreview.innerHTML = formatText(text);
+            // Check if content should be truncated
+            const isMobile = xMobileBtn.classList.contains('active');
+            const maxHeight = isMobile ? 100 : 160; // pixel height for truncation
+            const shouldTruncate = xPostContent.scrollHeight > maxHeight;
             
-            // Get the current device configuration
-            const config = xDeviceConfig[xCurrentDevice];
-            
-            // Check if preview content requires "Show more"
-            const exceedsHeight = xPostPreview.scrollHeight > config.maxHeight;
-            
-            if (exceedsHeight) {
-                xPostPreview.classList.add('truncated');
+            // Show or hide "Show more" button
+            if (shouldTruncate && text.trim().length > 0) {
+                xShowMore.style.display = 'inline-block';
                 
-                if (exactPreview) {
-                    // Determine approximately where the text would be cut off
-                    const fullText = xPostPreview.innerHTML;
-                    
-                    // Create a temporary element to measure the height
-                    const tempDiv = document.createElement('div');
-                    tempDiv.style.position = 'absolute';
-                    tempDiv.style.visibility = 'hidden';
-                    tempDiv.style.width = xPostPreview.offsetWidth + 'px';
-                    tempDiv.style.fontSize = config.fontSize + 'px';
-                    tempDiv.style.lineHeight = '1.5';
-                    document.body.appendChild(tempDiv);
-                    
-                    // Find the correct cut-off point through binary search
-                    let start = 0;
-                    let end = fullText.length;
-                    let mid = Math.floor((start + end) / 2);
-                    let bestCutoff = mid;
-                    
-                    // Binary search to find closest height match without exceeding
-                    for (let i = 0; i < 10; i++) { // Limit iterations for performance
-                        tempDiv.innerHTML = fullText.substring(0, mid);
-                        if (tempDiv.offsetHeight <= config.maxHeight) {
-                            start = mid;
-                            bestCutoff = mid;
-                        } else {
-                            end = mid;
-                        }
-                        mid = Math.floor((start + end) / 2);
-                    }
-                    
-                    // Clean up
-                    document.body.removeChild(tempDiv);
-                    
-                    // Apply the truncated text with a hard cutoff
-                    xPostPreview.innerHTML = fullText.substring(0, bestCutoff);
-                    xPostPreview.classList.add('with-hard-cutoff');
-                    
-                    // Add a hidden content indicator
-                    const hiddenIndicator = document.createElement('div');
-                    hiddenIndicator.className = 'hidden-content-indicator';
-                    hiddenIndicator.innerText = 'Hidden content (only visible after clicking "Show more")';
-                    xPostPreview.parentNode.insertBefore(hiddenIndicator, xShowMoreBtn);
-                } else {
-                    // Regular mode - just add the truncated class but show full text
-                    xPostPreview.classList.remove('with-hard-cutoff');
-                    
-                    // Remove hidden content indicator if it exists
-                    const hiddenIndicator = document.querySelector('.hidden-content-indicator');
-                    if (hiddenIndicator) {
-                        hiddenIndicator.remove();
-                    }
-                }
-                
-                xShowMoreBtn.style.display = 'inline-block';
-                xStatusDiv.textContent = `This post will show the "Show more" button on ${xCurrentDevice}.`;
-                xStatusDiv.className = 'status exceeds';
-                xStatusDiv.style.display = 'block';
+                // Update status message
+                xStatus.textContent = isMobile ? 
+                    'This post will show "Show more" on mobile after ~2-3 lines.' : 
+                    'This post will show "Show more" on desktop after ~3-5 lines.';
+                xStatus.className = 'status-message truncated';
+                xStatus.style.display = 'block';
             } else {
-                xPostPreview.classList.remove('truncated');
-                xPostPreview.classList.remove('with-hard-cutoff');
-                xShowMoreBtn.style.display = 'none';
-                
-                // Remove hidden content indicator if it exists
-                const hiddenIndicator = document.querySelector('.hidden-content-indicator');
-                if (hiddenIndicator) {
-                    hiddenIndicator.remove();
-                }
+                xShowMore.style.display = 'none';
                 
                 if (text.trim().length > 0) {
-                    xStatusDiv.textContent = `This post will display fully without needing expansion on ${xCurrentDevice}.`;
-                    xStatusDiv.className = 'status fits';
-                    xStatusDiv.style.display = 'block';
+                    xStatus.textContent = 'This post will display fully without truncation.';
+                    xStatus.className = 'status-message ok';
+                    xStatus.style.display = 'block';
                 } else {
-                    xStatusDiv.style.display = 'none';
+                    xStatus.style.display = 'none';
                 }
             }
         }
         
-        xShowMoreBtn.addEventListener('click', function() {
-            if (xExactPreviewCheckbox.checked) {
-                // In exact preview mode, clicking "Show more" should show the full text
-                xExactPreviewCheckbox.checked = false;
-                
-                // Remove hidden content indicator if it exists
-                const hiddenIndicator = document.querySelector('.hidden-content-indicator');
-                if (hiddenIndicator) {
-                    hiddenIndicator.remove();
+        // X Show More button functionality
+        xShowMore.addEventListener('click', function() {
+            if (xPostContent.classList.contains('truncated-x-desktop') || 
+                xPostContent.classList.contains('truncated-x-mobile')) {
+                // Remove truncation
+                xPostContent.classList.remove('truncated-x-desktop');
+                xPostContent.classList.remove('truncated-x-mobile');
+                xShowMore.textContent = 'Show less';
+            } else {
+                // Add truncation back
+                if (xDesktopBtn.classList.contains('active')) {
+                    xPostContent.classList.add('truncated-x-desktop');
+                } else {
+                    xPostContent.classList.add('truncated-x-mobile');
                 }
-                
-                updateXPreview();
-                xPostPreview.classList.remove('truncated');
-                this.textContent = 'Show less';
-            } else {
-                // Regular toggle behavior
-                xPostPreview.classList.toggle('truncated');
-                this.textContent = xPostPreview.classList.contains('truncated') ? 'Show more' : 'Show less';
+                xShowMore.textContent = 'Show more';
             }
         });
         
-        // LinkedIn functionality
-        const linkedinPostInput = document.getElementById('linkedin-post-input');
-        const linkedinCharCount = document.getElementById('linkedin-char-count');
-        const linkedinPreviewContent = document.getElementById('linkedin-preview-content');
-        const linkedinShowMoreBtn = document.getElementById('linkedin-show-more');
-        const linkedinStatusDiv = document.getElementById('linkedin-status');
-        const linkedinMobileBtn = document.getElementById('linkedin-mobile-btn');
-        const linkedinDesktopBtn = document.getElementById('linkedin-desktop-btn');
-        const linkedinPreviewContainer = document.getElementById('linkedin-preview-container');
-        const linkedinExactPreviewCheckbox = document.getElementById('linkedin-exact-preview');
-        const contentTypeRadios = document.querySelectorAll('input[name="content-type"]');
-        
-        // LinkedIn content type limits
-        const contentTypeLimits = {
-            post: {
-                maxChars: 3000,
-                desktop: {
-                    maxHeight: 210,
-                    truncateAfter: 210
-                },
-                mobile: {
-                    maxHeight: 160,
-                    truncateAfter: 140
-                },
-                showMoreText: "...see more"
-            },
-            article: {
-                maxChars: 125000,
-                desktop: {
-                    maxHeight: 9999, // No truncation for articles
-                    truncateAfter: 9999
-                },
-                mobile: {
-                    maxHeight: 9999, // No truncation for articles
-                    truncateAfter: 9999
-                },
-                showMoreText: ""
-            },
-            profile: {
-                maxChars: 2600,
-                desktop: {
-                    maxHeight: 210,
-                    truncateAfter: 200
-                },
-                mobile: {
-                    maxHeight: 160,
-                    truncateAfter: 180
-                },
-                showMoreText: "...see more"
-            },
-            comment: {
-                maxChars: 1750,
-                desktop: {
-                    maxHeight: 9999, // No truncation for comments
-                    truncateAfter: 9999
-                },
-                mobile: {
-                    maxHeight: 9999, // No truncation for comments
-                    truncateAfter: 9999
-                },
-                showMoreText: ""
-            }
-        };
-        
-        let linkedinCurrentDevice = 'desktop';
-        let currentContentType = 'post';
-        
-        // LinkedIn Toggle between mobile and desktop views
-        linkedinMobileBtn.addEventListener('click', () => {
-            setLinkedinDeviceView('mobile');
+        // LinkedIn Input Handling
+        linkedinPostInput.addEventListener('input', function() {
+            updateLinkedInCharCount();
+            updateLinkedInPreview();
         });
         
-        linkedinDesktopBtn.addEventListener('click', () => {
-            setLinkedinDeviceView('desktop');
-        });
-        
-        // Handle LinkedIn content type changes
-        contentTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                currentContentType = e.target.value;
-                updateLinkedinCharCount();
-                updateLinkedinPreview();
-            });
-        });
-        
-        function setLinkedinDeviceView(device) {
-            linkedinCurrentDevice = device;
+        function updateLinkedInCharCount() {
+            const count = linkedinPostInput.value.length;
+            linkedinCharCount.textContent = `${count.toLocaleString()}/3,000`;
             
-            // Update UI
-            if (device === 'mobile') {
-                linkedinPreviewContainer.classList.remove('desktop');
-                linkedinPreviewContainer.classList.add('mobile');
-                linkedinMobileBtn.classList.add('active');
-                linkedinDesktopBtn.classList.remove('active');
+            if (count > 3000) {
+                linkedinCharCount.classList.add('limit');
             } else {
-                linkedinPreviewContainer.classList.remove('mobile');
-                linkedinPreviewContainer.classList.add('desktop');
-                linkedinDesktopBtn.classList.add('active');
-                linkedinMobileBtn.classList.remove('active');
+                linkedinCharCount.classList.remove('limit');
             }
-            
-            // Re-evaluate the preview with the new device settings
-            updateLinkedinPreview();
         }
         
-        function updateLinkedinCharCount() {
+        function updateLinkedInPreview() {
             const text = linkedinPostInput.value;
-            const count = text.length;
-            const maxChars = contentTypeLimits[currentContentType].maxChars;
             
-            linkedinCharCount.textContent = `${count.toLocaleString()}/${maxChars.toLocaleString()}`;
-            linkedinCharCount.className = count > maxChars ? 'character-count limit' : 'character-count';
-        }
-        
-        linkedinPostInput.addEventListener('input', () => {
-            updateLinkedinCharCount();
-            updateLinkedinPreview();
-        });
-        
-        linkedinExactPreviewCheckbox.addEventListener('change', () => {
-            updateLinkedinPreview();
-        });
-        
-        function updateLinkedinPreview() {
-            const text = linkedinPostInput.value;
-            const count = text.length;
-            const exactPreview = linkedinExactPreviewCheckbox.checked;
-            const limits = contentTypeLimits[currentContentType];
-            const deviceSettings = limits[linkedinCurrentDevice];
-            const maxChars = limits.maxChars;
+            // Format text (handle line breaks)
+            linkedinPostContent.innerHTML = formatText(text);
             
-            // Format the text for preview (handle line breaks, URLs, hashtags, etc.)
-            linkedinPreviewContent.innerHTML = formatText(text);
+            // Check if content should be truncated based on character count
+            const isMobile = linkedinMobileBtn.classList.contains('active');
+            const truncateLimit = isMobile ? 140 : 210;
+            const shouldTruncate = text.length > truncateLimit;
             
-            // Set "see more" button text based on content type
-            linkedinShowMoreBtn.textContent = limits.showMoreText;
-            
-            // For content types that don't truncate, hide the checkbox and show more
-            if (deviceSettings.truncateAfter >= 1000) {
-                linkedinShowMoreBtn.style.display = 'none';
-                linkedinExactPreviewCheckbox.parentElement.style.display = 'none';
-                linkedinPreviewContent.classList.remove('truncated');
+            // Show or hide "...see more" button
+            if (shouldTruncate && text.trim().length > 0) {
+                linkedinShowMore.style.display = 'inline-block';
                 
-                // Remove hidden content indicator if it exists
-                const hiddenIndicator = document.querySelector('.hidden-content-indicator');
-                if (hiddenIndicator) {
-                    hiddenIndicator.remove();
-                }
+                // Update status message
+                linkedinStatus.textContent = isMobile ? 
+                    'This post will show "...see more" on mobile after ~140 characters.' : 
+                    'This post will show "...see more" on desktop after ~210 characters.';
+                linkedinStatus.className = 'status-message truncated';
+                linkedinStatus.style.display = 'block';
+            } else {
+                linkedinShowMore.style.display = 'none';
                 
                 if (text.trim().length > 0) {
-                    linkedinStatusDiv.textContent = `This ${currentContentType} will display in full without truncation.`;
-                    linkedinStatusDiv.className = 'status fits';
-                    linkedinStatusDiv.style.display = 'block';
+                    linkedinStatus.textContent = 'This post will display fully without truncation.';
+                    linkedinStatus.className = 'status-message ok';
+                    linkedinStatus.style.display = 'block';
                 } else {
-                    linkedinStatusDiv.style.display = 'none';
-                }
-                
-                return;
-            } else {
-                // Show the checkbox for content types that truncate
-                linkedinExactPreviewCheckbox.parentElement.style.display = 'flex';
-            }
-            
-            // Check if truncation is needed
-            const exceedsHeight = linkedinPreviewContent.scrollHeight > deviceSettings.maxHeight;
-            const exceedsTruncateLimit = count > deviceSettings.truncateAfter;
-            
-            if (exceedsHeight || exceedsTruncateLimit) {
-                linkedinPreviewContent.classList.add('truncated');
-                
-                if (exactPreview) {
-                    // Truncate text at character limit for the device/content type
-                    const truncatePoint = Math.min(deviceSettings.truncateAfter, text.length);
-                    
-                    // Handle possible cutoffs in the middle of words or HTML tags
-                    let safeText = text.substring(0, truncatePoint);
-                    // Make sure we don't cut in the middle of a word if possible
-                    const lastSpaceIndex = safeText.lastIndexOf(' ');
-                    if (lastSpaceIndex > truncatePoint * 0.8) { // Only if the space is reasonably close to the end
-                        safeText = safeText.substring(0, lastSpaceIndex);
-                    }
-                    
-                    // Apply the truncated text
-                    linkedinPreviewContent.innerHTML = formatText(safeText);
-                    linkedinPreviewContent.classList.add('with-hard-cutoff');
-                    
-                    // Add the hidden content indicator
-                    const existingIndicator = document.querySelector('.linkedin-hidden-content-indicator');
-                    if (!existingIndicator) {
-                        const hiddenIndicator = document.createElement('div');
-                        hiddenIndicator.className = 'hidden-content-indicator linkedin-hidden-content-indicator';
-                        hiddenIndicator.innerText = 'Hidden content (only visible after clicking "...see more")';
-                        linkedinPreviewContent.parentNode.insertBefore(hiddenIndicator, linkedinShowMoreBtn);
-                    }
-                } else {
-                    // Regular mode - just add the truncated class but show full text
-                    linkedinPreviewContent.classList.remove('with-hard-cutoff');
-                    
-                    // Remove hidden content indicator if it exists
-                    const hiddenIndicator = document.querySelector('.linkedin-hidden-content-indicator');
-                    if (hiddenIndicator) {
-                        hiddenIndicator.remove();
-                    }
-                }
-                
-                linkedinShowMoreBtn.style.display = 'inline-block';
-                linkedinStatusDiv.textContent = `This ${currentContentType} will be truncated with "...see more" on ${linkedinCurrentDevice}.`;
-                linkedinStatusDiv.className = 'status exceeds';
-                linkedinStatusDiv.style.display = 'block';
-            } else {
-                linkedinPreviewContent.classList.remove('truncated');
-                linkedinPreviewContent.classList.remove('with-hard-cutoff');
-                linkedinShowMoreBtn.style.display = 'none';
-                
-                // Remove hidden content indicator if it exists
-                const hiddenIndicator = document.querySelector('.linkedin-hidden-content-indicator');
-                if (hiddenIndicator) {
-                    hiddenIndicator.remove();
-                }
-                
-                if (text.trim().length > 0) {
-                    linkedinStatusDiv.textContent = `This ${currentContentType} will display fully without truncation on ${linkedinCurrentDevice}.`;
-                    linkedinStatusDiv.className = 'status fits';
-                    linkedinStatusDiv.style.display = 'block';
-                } else {
-                    linkedinStatusDiv.style.display = 'none';
+                    linkedinStatus.style.display = 'none';
                 }
             }
         }
         
-        linkedinShowMoreBtn.addEventListener('click', function() {
-            if (linkedinExactPreviewCheckbox.checked) {
-                // In exact preview mode, clicking "see more" should show the full text
-                linkedinExactPreviewCheckbox.checked = false;
-                
-                // Remove hidden content indicator if it exists
-                const hiddenIndicator = document.querySelector('.linkedin-hidden-content-indicator');
-                if (hiddenIndicator) {
-                    hiddenIndicator.remove();
-                }
-                
-                updateLinkedinPreview();
-                linkedinPreviewContent.classList.remove('truncated');
-                this.style.display = 'none';
+        // LinkedIn Show More button functionality
+        linkedinShowMore.addEventListener('click', function() {
+            if (linkedinPostContent.classList.contains('truncated-linkedin-desktop') || 
+                linkedinPostContent.classList.contains('truncated-linkedin-mobile')) {
+                // Remove truncation
+                linkedinPostContent.classList.remove('truncated-linkedin-desktop');
+                linkedinPostContent.classList.remove('truncated-linkedin-mobile');
+                linkedinShowMore.textContent = 'See less';
             } else {
-                // Toggle truncation in regular mode
-                linkedinPreviewContent.classList.toggle('truncated');
-                this.textContent = linkedinPreviewContent.classList.contains('truncated') 
-                    ? contentTypeLimits[currentContentType].showMoreText 
-                    : 'See less';
+                // Add truncation back
+                if (linkedinDesktopBtn.classList.contains('active')) {
+                    linkedinPostContent.classList.add('truncated-linkedin-desktop');
+                } else {
+                    linkedinPostContent.classList.add('truncated-linkedin-mobile');
+                }
+                linkedinShowMore.textContent = '...see more';
             }
         });
         
-        // Shared function for formatting text with links, hashtags, etc.
+        // Sync content between platforms
+        xPostInput.addEventListener('input', function() {
+            linkedinPostInput.value = this.value;
+            updateLinkedInCharCount();
+            updateLinkedInPreview();
+        });
+        
+        linkedinPostInput.addEventListener('input', function() {
+            xPostInput.value = this.value;
+            updateXCharCount();
+            updateXPreview();
+        });
+        
+        // Helper function to format text
         function formatText(text) {
-            // Replace URLs with clickable links
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            text = text.replace(urlRegex, '<span style="color: var(--linkedin-blue);">$1</span>');
-            
-            // Replace hashtags
-            const hashtagRegex = /#(\w+)/g;
-            text = text.replace(hashtagRegex, '<span style="color: var(--linkedin-blue);">#$1</span>');
-            
-            // Replace mentions
-            const mentionRegex = /@(\w+)/g;
-            text = text.replace(mentionRegex, '<span style="color: var(--linkedin-blue);">@$1</span>');
-            
             // Replace line breaks with <br>
             return text.replace(/\n/g, '<br>');
         }
         
-        // Sync content between platforms
-        linkedinPostInput.addEventListener('input', () => {
-            xPostInput.value = linkedinPostInput.value;
-            updateXPreview();
-        });
-        
-        xPostInput.addEventListener('input', () => {
-            linkedinPostInput.value = xPostInput.value;
-            updateLinkedinCharCount();
-            updateLinkedinPreview();
-        });
-        
         // Initialize
+        updateXCharCount();
         updateXPreview();
-        updateLinkedinCharCount();
-        updateLinkedinPreview();
+        updateLinkedInCharCount();
+        updateLinkedInPreview();
     </script>
 </body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Media Post Previewer</title>
-    <style>
-        /* Shared Styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.3s ease;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .platform-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .platform-btn {
-            flex: 1;
-            padding: 12px 16px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .platform-logo {
-            width: 24px;
-            height: 24px;
-        }
-        
-        /* Device Toggle Styles */
-        .device-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-        
-        /* Common Tool Container */
-        .tool-container {
-            margin-bottom: 20px;
-            border-radius: 12px;
-        }
-        
-        .toggle-container {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .toggle-container label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .toggle-container input {
-            margin-right: 8px;
-        }
-        
-        /* X Theme Colors and Styles */
-        :root {
-            --x-background: #000000;
-            --x-card-bg: #16181c;
-            --x-text: #e7e9ea;
-            --x-text-secondary: #71767b;
-            --x-border: #2f3336;
-            --x-blue: #1d9bf0;
-            --x-blue-hover: #1a8cd8;
-            --x-button-text: #fff;
-        }
-        
-        /* X-specific styles */
-        body.x-theme {
-            background-color: var(--x-background);
-            color: var(--x-text);
-        }
-        
-        .x-theme .tool-container {
-            background-color: var(--x-card-bg);
-            border: 1px solid var(--x-border);
-            padding: 20px;
-        }
-        
-        .x-theme h1 {
-            color: var(--x-text);
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-        
-        .x-theme .device-btn {
-            padding: 8px 16px;
-            border: 1px solid var(--x-border);
-            background-color: var(--x-card-bg);
-            color: var(--x-text);
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        
-        .x-theme .device-btn.active {
-            background-color: var(--x-blue);
-            color: var(--x-button-text);
-            border-color: var(--x-blue);
-        }
-        
-        .x-theme .input-area {
-            position: relative;
-            margin-bottom: 20px;
-            border: 1px solid var(--x-border);
-            border-radius: 4px;
-            background-color: var(--x-card-bg);
-        }
-        
-        .x-theme textarea {
-            width: 100%;
-            height: 120px;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            resize: none;
-            font-size: 16px;
-            box-sizing: border-box;
-            font-family: inherit;
-            background-color: var(--x-card-bg);
-            color: var(--x-text);
-        }
-        
-        .x-theme textarea:focus {
-            outline: none;
-        }
-        
-        .x-theme .character-count {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 14px;
-            color: var(--x-text-secondary);
-        }
-        
-        .x-theme .character-count.limit {
-            color: #f4212e;
-        }
-        
-        .x-theme .preview-section-title {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: var(--x-text);
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--x-border);
-        }
-        
-        .x-theme .preview-section {
-            border: 1px solid var(--x-border);
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            background-color: var(--x-background);
-        }
-        
-        .x-theme .post-header {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--x-border);
-            background-color: transparent;
-        }
-        
-        .x-theme .post-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            margin-right: 12px;
-            background-color: #333;
-            overflow: hidden;
-        }
-        
-        .x-theme .post-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .x-theme .post-user-info {
-            flex-grow: 1;
-        }
-        
-        .x-theme .post-name {
-            font-weight: bold;
-            margin-bottom: 2px;
-            color: var(--x-text);
-        }
-        
-        .x-theme .post-username {
-            color: var(--x-text-secondary);
-            font-size: 14px;
-        }
-        
-        .x-theme .post-body {
-            padding: 0 16px;
-        }
-        
-        .x-theme .mobile .post-body {
-            font-size: 15px;
-        }
-        
-        .x-theme .desktop .post-body {
-            font-size: 16px;
-        }
-        
-        .x-theme .preview-content {
-            line-height: 1.5;
-            margin: 12px 0;
-            word-wrap: break-word;
-            color: var(--x-text);
-        }
-        
-        .x-theme .truncated {
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .x-theme .desktop .truncated {
-            max-height: 315px;
-        }
-        
-        .x-theme .mobile .truncated {
-            max-height: 260px;
-        }
-        
-        .x-theme .with-hard-cutoff {
-            position: relative;
-            border-bottom: 2px solid var(--x-border);
-            padding-bottom: 4px;
-        }
-        
-        .x-theme .show-more {
-            color: var(--x-blue);
-            font-size: 15px;
-            cursor: pointer;
-            margin: 8px 0 12px;
-            display: inline-block;
-        }
-        
-        .x-theme .post-engagement {
-            display: flex;
-            padding: 12px 16px;
-            border-top: 1px solid var(--x-border);
-            color: var(--x-text-secondary);
-        }
-        
-        .x-theme .action-item {
-            display: flex;
-            align-items: center;
-            margin-right: 24px;
-            font-size: 13px;
-        }
-        
-        .x-theme .action-icon {
-            width: 18px;
-            height: 18px;
-            margin-right: 6px;
-            fill: var(--x-text-secondary);
-        }
-        
-        .x-theme .hidden-content-indicator {
-            display: block;
-            margin: 12px 0;
-            padding: 8px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--x-border);
-            border-radius: 8px;
-            color: var(--x-text-secondary);
-            font-size: 14px;
-            text-align: center;
-            font-style: italic;
-        }
-        
-        .x-theme .status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .x-theme .fits {
-            background-color: rgba(0, 186, 124, 0.1);
-            color: #00ba7c;
-            border: 1px solid rgba(0, 186, 124, 0.3);
-        }
-        
-        .x-theme .exceeds {
-            background-color: rgba(244, 33, 46, 0.1);
-            color: #f4212e;
-            border: 1px solid rgba(244, 33, 46, 0.3);
-        }
-        
-        .x-theme .info {
-            padding: 15px;
-            background-color: var(--x-card-bg);
-            border-radius: 16px;
-            margin-top: 20px;
-            border: 1px solid var(--x-border);
-        }
-        
-        .x-theme .info h3 {
-            margin-top: 0;
-            font-size: 16px;
-            color: var(--x-text);
-        }
-        
-        .x-theme .info p {
-            margin: 10px 0;
-            color: var(--x-text-secondary);
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        
-        .x-theme .toggle-container label {
-            font-size: 14px;
-            color: var(--x-text-secondary);
-        }
-        
-        .x-theme .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            color: var(--x-text-secondary);
-            font-size: 12px;
-            border-top: 1px solid var(--x-border);
-        }
-        
-        /* LinkedIn Theme Colors and Styles */
-        :root {
-            --linkedin-bg: #f3f2ef;
-            --linkedin-white: #ffffff;
-            --linkedin-text: #191919;
-            --linkedin-text-light: #666666;
-            --linkedin-border: #e0e0e0;
-            --linkedin-blue: #0a66c2;
-            --linkedin-blue-light: #dce6f1;
-            --linkedin-green: #057642;
-            --linkedin-red: #b74700;
-        }
-        
-        /* LinkedIn-specific styles */
-        body.linkedin-theme {
-            background-color: var(--linkedin-bg);
-            color: var(--linkedin-text);
-        }
-        
-        .linkedin-theme .platform-toggle {
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-        }
-        
-        .linkedin-theme .header {
-            background-color: var(--linkedin-white);
-            padding: 16px;
-            border-radius: 8px;
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .linkedin-theme h1 {
-            font-size: 20px;
-            color: var(--linkedin-text);
-            margin: 0;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .linkedin-theme .tool-container {
-            background-color: var(--linkedin-white);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-        }
-        
-        .linkedin-theme .post-type-selector {
-            margin-bottom: 20px;
-        }
-        
-        .linkedin-theme .post-type-selector h3 {
-            font-size: 16px;
-            margin-top: 0;
-            margin-bottom: 12px;
-            color: var(--linkedin-text);
-        }
-        
-        .linkedin-theme .content-type {
-            display: flex;
-            margin-bottom: 15px;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .linkedin-theme .content-type label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            color: var(--linkedin-text);
-        }
-        
-        .linkedin-theme .content-type input {
-            margin-right: 8px;
-        }
-        
-        .linkedin-theme .device-btn {
-            padding: 8px 16px;
-            border: 1px solid var(--linkedin-border);
-            background-color: var(--linkedin-white);
-            color: var(--linkedin-text);
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-        
-        .linkedin-theme .device-btn.active {
-            background-color: var(--linkedin-blue);
-            color: var(--linkedin-white);
-            border-color: var(--linkedin-blue);
-        }
-        
-        .linkedin-theme .input-area {
-            position: relative;
-            margin-bottom: 20px;
-            border: 1px solid var(--linkedin-border);
-            border-radius: 8px;
-            background-color: var(--linkedin-white);
-        }
-        
-        .linkedin-theme textarea {
-            width: 100%;
-            height: 120px;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            resize: none;
-            font-size: 16px;
-            box-sizing: border-box;
-            font-family: inherit;
-            background-color: var(--linkedin-white);
-            color: var(--linkedin-text);
-        }
-        
-        .linkedin-theme textarea:focus {
-            outline: none;
-            box-shadow: 0 0 0 1px var(--linkedin-blue);
-        }
-        
-        .linkedin-theme .character-count {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 14px;
-            color: var(--linkedin-text-light);
-        }
-        
-        .linkedin-theme .character-count.limit {
-            color: var(--linkedin-red);
-        }
-        
-        .linkedin-theme .preview-section-title {
-            font-size: 16px;
-            margin-bottom: 12px;
-            color: var(--linkedin-text);
-            font-weight: 600;
-        }
-        
-        .linkedin-theme .linkedin-post {
-            background-color: var(--linkedin-white);
-            border-radius: 8px;
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        
-        .linkedin-theme .post-header {
-            display: flex;
-            padding: 12px 16px;
-        }
-        
-        .linkedin-theme .post-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            margin-right: 8px;
-            background-color: var(--linkedin-blue-light);
-            overflow: hidden;
-            border: 1px solid var(--linkedin-border);
-        }
-        
-        .linkedin-theme .post-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .linkedin-theme .post-user-info {
-            flex-grow: 1;
-        }
-        
-        .linkedin-theme .post-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--linkedin-text);
-            margin-bottom: 4px;
-        }
-        
-        .linkedin-theme .post-headline {
-            font-size: 12px;
-            color: var(--linkedin-text-light);
-            margin-bottom: 4px;
-        }
-        
-        .linkedin-theme .post-meta {
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            color: var(--linkedin-text-light);
-        }
-        
-        .linkedin-theme .post-time {
-            margin-right: 4px;
-        }
-        
-        .linkedin-theme .post-visibility {
-            display: flex;
-            align-items: center;
-        }
-        
-        .linkedin-theme .post-visibility svg {
-            width: 12px;
-            height: 12px;
-            margin-right: 4px;
-            fill: var(--linkedin-text-light);
-        }
-        
-        .linkedin-theme .post-body {
-            padding: 0 16px 16px;
-            position: relative;
-        }
-        
-        .linkedin-theme .preview-content {
-            font-size: 14px;
-            line-height: 1.5;
-            word-wrap: break-word;
-            color: var(--linkedin-text);
-        }
-        
-        .linkedin-theme .desktop .preview-content {
-            font-size: 14px;
-        }
-        
-        .linkedin-theme .mobile .preview-content {
-            font-size: 13px;
-        }
-        
-        .linkedin-theme .truncated {
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .linkedin-theme .desktop .truncated {
-            max-height: 210px;
-        }
-        
-        .linkedin-theme .mobile .truncated {
-            max-height: 160px;
-        }
-        
-        .linkedin-theme .with-hard-cutoff {
-            border-bottom: 2px solid var(--linkedin-border);
-            padding-bottom: 4px;
-        }
-        
-        .linkedin-theme .show-more {
-            color: var(--linkedin-blue);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-block;
-            margin-top: 8px;
-        }
-        
-        .linkedin-theme .post-engagement {
-            padding: 8px 16px;
-            border-top: 1px solid var(--linkedin-border);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .linkedin-theme .reaction-summary {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 12px;
-            color: var(--linkedin-text-light);
-        }
-        
-        .linkedin-theme .reaction-icons {
-            display: flex;
-            margin-right: 4px;
-        }
-        
-        .linkedin-theme .reaction-icon {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: var(--linkedin-blue);
-            color: white;
-            font-size: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: -4px;
-            border: 2px solid white;
-        }
-        
-        .linkedin-theme .reaction-icon.like {
-            background-color: #378fe9;
-        }
-        
-        .linkedin-theme .reaction-icon.celebrate {
-            background-color: #6dae4f;
-        }
-        
-        .linkedin-theme .reaction-icon.support {
-            background-color: #a872e8;
-        }
-        
-        .linkedin-theme .comments-count {
-            margin-left: auto;
-        }
-        
-        .linkedin-theme .engagement-actions {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 8px;
-            border-top: 1px solid var(--linkedin-border);
-        }
-        
-        .linkedin-theme .engagement-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--linkedin-text-light);
-            font-size: 14px;
-            font-weight: 600;
-            padding: 8px;
-            cursor: pointer;
-            flex: 1;
-        }
-        
-        .linkedin-theme .engagement-button:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
-        }
-        
-        .linkedin-theme .engagement-button svg {
-            width: 18px;
-            height: 18px;
-            margin-right: 4px;
-            fill: var(--linkedin-text-light);
-        }
-        
-        .linkedin-theme .hidden-content-indicator {
-            display: block;
-            margin: 12px 0;
-            padding: 8px;
-            background-color: var(--linkedin-bg);
-            border: 1px solid var(--linkedin-border);
-            border-radius: 4px;
-            color: var(--linkedin-text-light);
-            font-size: 13px;
-            text-align: center;
-            font-style: italic;
-        }
-        
-        .linkedin-theme .status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            font-weight: 600;
-            text-align: center;
-        }
-        
-        .linkedin-theme .fits {
-            background-color: #f1f7f1;
-            color: var(--linkedin-green);
-            border: 1px solid rgba(5, 118, 66, 0.3);
-        }
-        
-        .linkedin-theme .exceeds {
-            background-color: #fcf1ed;
-            color: var(--linkedin-red);
-            border: 1px solid rgba(183, 71, 0, 0.3);
-        }
-        
-        .linkedin-theme .info-container {
-            background-color: var(--linkedin-white);
-            border-radius: 8px;
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-            padding: 16px;
-        }
-        
-        .linkedin-theme .info-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 12px;
-            color: var(--linkedin-text);
-        }
-        
-        .linkedin-theme table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        
-        .linkedin-theme table th, .linkedin-theme table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid var(--linkedin-border);
-        }
-        
-        .linkedin-theme table th {
-            color: var(--linkedin-blue);
-            font-weight: 600;
-        }
-        
-        .linkedin-theme .toggle-container label {
-            font-size: 14px;
-            color: var(--linkedin-text-light);
-        }
-        
-        .linkedin-theme .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: var(--linkedin-text-light);
-        }
-        
-        /* Shared Toggle Button Style */
-        .x-theme .platform-btn.x-btn {
-            background-color: var(--x-blue);
-            color: white;
-        }
-        
-        .x-theme .platform-btn.linkedin-btn {
-            background-color: transparent;
-            color: var(--x-text);
-        }
-        
-        .linkedin-theme .platform-btn.linkedin-btn {
-            background-color: var(--linkedin-blue);
-            color: white;
-        }
-        
-        .linkedin-theme .platform-btn.x-btn {
-            background-color: transparent;
-            color: var(--linkedin-text);
-        }
-        
-        /* Hidden elements */
-        .platform-content {
-            display: none;
-        }
-        
-        .platform-content.active {
-            display: block;
-        }
-    </style>
-</head>
-<body class="x-theme">
-    <div class="container">
-        <h1>Social Media Post Previewer</h1>
-        
-        <div class="platform-toggle">
-            <div class="platform-btn x-btn" id="x-platform-btn">
-                <svg class="platform-logo" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-                </svg>
-                X / Twitter
-            </div>
-            <div class="platform-btn linkedin-btn" id="linkedin-platform-btn">
-                <svg class="platform-logo" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
-                </svg>
-                LinkedIn
-            </div>
-        </div>
-
-        <!-- X Platform Content -->
-        <div class="platform-content active" id="x-content">
-            <div class="tool-container">
-                <div class="device-toggle">
-                    <button id="x-mobile-btn" class="device-btn">Mobile</button>
-                    <button id="x-desktop-btn" class="device-btn active">Desktop</button>
-                </div>
-                
-                <div class="input-area">
-                    <textarea id="x-post-input" placeholder="What's happening?"></textarea>
-                    <div id="x-char-count" class="character-count">0/280</div>
-                </div>
-                
-                <div class="preview-section-title">Post Preview</div>
-                
-                <div id="x-preview-container" class="preview-section desktop">
-                    <div class="post-header">
-                        <div class="post-avatar">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyMCIgZmlsbD0iIzFlMjAzMCIvPjxwYXRoIGQ9Ik0xMjggNzBhNTggNTggMCAwIDAgMCAxMTYgNTggNTggMCAwIDAgMC0xMTZ6IiBmaWxsPSIjNzE3NjdiIi8+PC9zdmc+" alt="Profile avatar">
-                        </div>
-                        <div class="post-user-info">
-                            <div class="post-name">User Name</div>
-                            <div class="post-username">@username</div>
-                        </div>
-                    </div>
-                    <div class="post-body">
-                        <div id="x-post-preview" class="preview-content"></div>
-                        <div id="x-show-more" class="show-more" style="display: none;">Show more</div>
-                    </div>
-                    <div class="post-engagement">
-                        <div class="action-item">
-                            <svg class="action-icon" viewBox="0 0 24 24">
-                                <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
-                            </svg>
-                            <span>0</span>
-                        </div>
-                        <div class="action-item">
-                            <svg class="action-icon" viewBox="0 0 24 24">
-                                <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
-                            </svg>
-                            <span>0</span>
-                        </div>
-                        <div class="action-item">
-                            <svg class="action-icon" viewBox="0 0 24 24">
-                                <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                            </svg>
-                            <span>0</span>
-                        </div>
-                        <div class="action-item">
-                            <svg class="action-icon" viewBox="0 0 24 24">
-                                <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
-                            </svg>
-                            <span>0</span>
-                        </div>
+</html>
